@@ -40,6 +40,13 @@ Options:
 - `AP_SUEXEC_CGROUPS_FAST_PATH` (must be specified in `suexec.h`)
 - `AP_SUEXEC_CGROUPS_FAST_CONTROLLERS` (must be specified in `suexec.h`)
 
+
+### sticky CPU affinity
+
+Options:
+
+- `AP_STICKY_AFFINITY`: process *sticks* to the CPU core it was started on. This should take off some stress from process scheduler constantly trying to re-schedule hundreds of processes between cores.
+
 The exact set of features which should be compiled in the executable is tuned in the Makefile. Hardcoded values for cgroups are set in `suexec.h`.
 
 It makes sense to build suexec as debian package, otherwise (if you want to compile things manually) the list of dependencies can be found in `debian/control` file.

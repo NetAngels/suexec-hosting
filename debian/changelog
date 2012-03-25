@@ -1,3 +1,9 @@
+apache2-suexec-hosting (1.2) unstable; urgency=low
+
+  * Sticky CPU affinity
+
+ -- Artyom Pervukhin <artyom@evasive.ru>  Sun, 25 Mar 2012 21:14:03 +0600
+
 apache2-suexec-hosting (1.1) unstable; urgency=low
 
   * undone 1.0-4 patch

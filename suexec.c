@@ -65,6 +65,11 @@
 #include <libcgroup.h>
 #endif
 
+#ifdef AP_STICKY_AFFINITY
+#define _GNU_SOURCE
+#include <sched.h>
+#endif
+
 /*
  ***********************************************************************
  * There is no initgroups() in QNX, so I believe this is safe :-)
@@ -277,6 +282,10 @@ int main(int argc, char *argv[])
     struct group *gr;       /* group entry holder        */
     struct stat dir_info;   /* directory info holder     */
     struct stat prg_info;   /* program info holder       */
+#ifdef AP_STICKY_AFFINITY
+    int cpu;
+    cpu_set_t cpu_mask;
+#endif
 
     /*
      * Start with a "clean" environment
@@ -321,6 +330,9 @@ int main(int argc, char *argv[])
 #endif
 #ifdef AP_SUEXEC_CGROUPS_FAST_PATH
         fprintf(stderr, " -D AP_SUEXEC_CGROUPS_FAST_PATH=\"%s\"\n", AP_SUEXEC_CGROUPS_FAST_PATH);
+#endif
+#ifdef AP_STICKY_AFFINITY
+        fprintf(stderr, " -D AP_STICKY_AFFINITY\n");
 #endif
 #ifdef AP_DOC_ROOT
         fprintf(stderr, " -D AP_DOC_ROOT=\"%s\"\n", AP_DOC_ROOT);
@@ -676,6 +688,18 @@ if (((uid != dir_info.st_uid) && (dir_info.st_uid)) ||
 			log_err("cgroup change of group failed for (%s)\n", target_uname);
 		}
 #endif
+	}
+#endif
+
+#ifdef AP_STICKY_AFFINITY
+	CPU_ZERO(&cpu_mask);
+	if((cpu = sched_getcpu()) == -1) {
+		log_err("failed to get current cpu used\n");
+	} else {
+		CPU_SET(cpu, &cpu_mask);
+		if (sched_setaffinity(0, sizeof(cpu_mask), &cpu_mask) == -1) {
+	                log_err("failed to set cpu affinity\n");
+		}
 	}
 #endif
 
